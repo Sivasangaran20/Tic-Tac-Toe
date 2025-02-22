@@ -6,18 +6,25 @@ const initialGameBoard = [
   [null, null, null],
 ];
 
-export default function GameBoard({ onSelectPlayer, activePlayerSymbol }) {
-  const [gameBoard, setGameBoard] = useState(initialGameBoard);
+export default function GameBoard({ onSelectPlayer, turns }) {
+  let gameBoard = initialGameBoard;
 
-  const updateGameBoard = function (rowIndex, colIndex) {
-    setGameBoard((prevState) => {
-      const deepCopyState = [...prevState.map((innerArr) => [...innerArr])];
-      deepCopyState[rowIndex][colIndex] = activePlayerSymbol;
-      return deepCopyState;
-    });
+  for (const turn of turns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+  // const [gameBoard, setGameBoard] = useState(initialGameBoard);
 
-    onSelectPlayer();
-  };
+  // const updateGameBoard = function (rowIndex, colIndex) {
+  //   setGameBoard((prevState) => {
+  //     const deepCopyState = [...prevState.map((innerArr) => [...innerArr])];
+  //     deepCopyState[rowIndex][colIndex] = activePlayerSymbol;
+  //     return deepCopyState;
+  //   });
+
+  //   onSelectPlayer();
+  // };
   return (
     <>
       GameBoard
@@ -27,7 +34,11 @@ export default function GameBoard({ onSelectPlayer, activePlayerSymbol }) {
             <ol>
               {row.map((col, colInd) => (
                 <li id={colInd}>
-                  <button onClick={() => updateGameBoard(rowInd, colInd)}>
+                  {/* <button onClick={() => updateGameBoard(rowInd, colInd)}> */}
+                  <button
+                    onClick={() => onSelectPlayer(rowInd, colInd)}
+                    disabled={col !== null}
+                  >
                     {col}
                   </button>
                 </li>

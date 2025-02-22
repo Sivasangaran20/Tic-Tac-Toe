@@ -3,12 +3,31 @@ import GameBoard from "./components/GameBoard";
 import Player from "./components/Player";
 import Log from "./components/Log";
 import { useState } from "react";
+import { WINNING_COMBINATIONS } from "./winning-combinations";
+
+function deriveActivePlayerState(gameTurns) {
+  let currentPlayer = "X";
+  if (gameTurns.length > 0 && gameTurns[0].player === "X") {
+    currentPlayer = "O";
+  }
+  return currentPlayer;
+}
 
 function App() {
-  const [activePlayer, setActivePlayer] = useState("X");
+  const [gameTurns, setGameTurns] = useState([]);
+  // const [activePlayer, setActivePlayer] = useState("X");
+  const activePlayer = deriveActivePlayerState(gameTurns);
 
   function handleActivePlayer(rowInd, colInd) {
-    setActivePlayer((prevState) => (prevState === "X" ? "O" : "X"));
+    // setActivePlayer((prevState) => (prevState === "X" ? "O" : "X"));
+    setGameTurns((prevState) => {
+      const currentPlayer = deriveActivePlayerState(prevState);
+      const updatedTurns = [
+        { square: { row: rowInd, col: colInd }, player: currentPlayer },
+        ...prevState,
+      ];
+      return updatedTurns;
+    });
   }
   return (
     <div className="App">
@@ -29,10 +48,11 @@ function App() {
           </ol>
           <GameBoard
             onSelectPlayer={handleActivePlayer}
-            activePlayerSymbol={activePlayer}
+            // activePlayerSymbol={activePlayer}
+            turns={gameTurns}
           />
         </div>
-        <Log />
+        <Log turns={gameTurns} />
       </main>
     </div>
   );
